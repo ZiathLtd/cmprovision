@@ -105,3 +105,96 @@ In particular note:
 
 The main code of the Raspberry Pi compute module provisioning system is made available under the terms of the BSD 3-clause ("new") license.
 Look in the `vendor` directory (after running `composer --install`) to consult the open source licenses of the various dependencies like the Laravel framework used.
+
+
+
+========================================================================================================================================================
+
+## Advanced CM4 Provisioning Setup and scriptexecute Rebuild ##
+
+### Installing cmprovision on Raspberry Pi OS (Bookworm – Desktop)
+
+1. Download the latest `.deb` package from:
+
+[https://github.com/raspberrypi/cmprovision/releases/tag/v1.6.3](https://github.com/raspberrypi/cmprovision/releases/tag/v1.6.3)
+
+2. Install it:
+
+
+sudo apt install ./cmprovision_1.6.3-1_arm64.deb
+
+This installs cmprovision into:
+
+/var/lib/cmprovision
+
+    Replace the scriptexecute folder with your custom scripts:
+
+Download the scriptexecute folder from github Repo : https://github.com/ZiathLtd/cmprovision and replace it in /var/lib/cmprovision/scriptexecute
+
+sudo rm -rf /var/lib/cmprovision/scriptexecute
+sudo cp -r scriptexecute /var/lib/cmprovision/scriptexecute
+sudo chown -R root:root /var/lib/cmprovision/scriptexecute
+sudo reboot
+
+Provisioning Over Network
+
+For network-based provisioning of CM4:
+
+    Connect the provisioner Pi to a dedicated Ethernet hub with only the CM4 devices to be provisioned.
+
+    Assign a static IP to the provisioner by creating /etc/network/interfaces:
+
+auto eth0
+iface eth0 inet static
+       address 172.20.0.1/16
+
+    Do not set a default gateway. Reboot afterwards.
+
+=========================================================================================================================================
+
+Due to Kernel upgrade or CM4 hardware change, if the provisioning starts failing at 1st step, 
+then the possible reason is scriptexecute.img is obsolete and needs to be rebuild.
+
+Rebuilding scriptexecute.img (After Kernel Update)
+
+    Clone the scriptexecutor repository:
+
+git clone https://github.com/ZiathLtd/scriptexecutor
+
+cd scriptexecutor
+
+    Edit the config for your kernel version:
+
+configs/scriptexecute_cm4_defconfig
+
+Update the line:
+
+BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="rpi-6.xx.y"
+
+Use the correct branch (e.g., rpi-6.12.y).
+
+    Fix permissions if needed:
+
+sudo chown -R $USER:$USER ./
+
+    Build the image:
+
+make config
+# choose: scriptexecute_cm4_defconfig
+./build.sh
+
+The new image will be located at:
+
+build/scriptexecute.img
+
+    Replace the old image in cmprovision:
+
+sudo cp build/scriptexecute.img /var/lib/cmprovision/scriptexecute/
+
+    Also update kernel files if required (kernel8.img, .dtb, start.elf, fixup*.dat).
+
+    Reboot:
+
+sudo reboot
+
+The CM4 should now successfully boot using the updated provisioning environment.
