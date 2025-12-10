@@ -198,3 +198,13 @@ sudo cp build/scriptexecute.img /var/lib/cmprovision/scriptexecute/
 sudo reboot
 
 The CM4 should now successfully boot using the updated provisioning environment.
+
+
+==================================================================================================
+
+Credentials (Operator)
+Operator@azenta.com  Operator  Provisioner2025
+
+Admin
+admin@azenta.com  Admin  ztsexpress
+
