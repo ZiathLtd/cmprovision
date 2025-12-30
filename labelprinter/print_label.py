@@ -24,11 +24,14 @@ with open(file_path) as f:
 serial = ''
 board = ''
 printer_ip = ''
+part_no = ''
 for line in content.splitlines():
     if line.lower().startswith('serial:'):
         serial = line.split(':',1)[1].strip()
     elif line.lower().startswith('board:'):
         board = line.split(':',1)[1].strip()
+    elif line.lower().startswith('partno:'):
+        part_no = line.split(':', 1)[1].strip()
     elif line.lower().startswith('printer ip:'):
         printer_ip = line.split(':',1)[1].strip()
 
@@ -53,10 +56,12 @@ font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
 # Text to print
 text1 = f"Serial: {serial}"
 text2 = f"Board: {board}"
+text3 = f"PartNo: {part_no}"
 
 # Draw centered text
-draw.text((10,90), text1, fill="black",font=font)
-draw.text((10,180), text2, fill="black",font=font)
+draw.text((10, 70), text1, fill="black", font=font)
+draw.text((10, 140), text2, fill="black", font=font)
+draw.text((10, 210), text3, fill="black", font=font)
 
 # ----- GENERATE RASTER DATA -----
 qlr = BrotherQLRaster(PRINTER_MODEL)
