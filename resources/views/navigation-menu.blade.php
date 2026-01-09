@@ -17,6 +17,7 @@
                     </x-jet-nav-link>
                 </div>
 
+               @if (Auth::check() && Auth::user()->name === 'Admin')             
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     <x-jet-nav-link href="{{ route('cms') }}" :active="request()->routeIs('cms')">
                         {{ __('CMs') }}
@@ -57,7 +58,8 @@
                     <x-jet-nav-link href="{{ route('settings') }}" :active="request()->routeIs('settings')">
                         {{ __('Other settings') }}
                     </x-jet-nav-link>
-                </div>                
+                </div>
+                @endif
             </div>
 
             <div class="hidden sm:flex sm:items-center sm:ml-6">
