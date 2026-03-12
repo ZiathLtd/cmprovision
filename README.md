@@ -199,10 +199,15 @@ You should see the printer listed and idle.
 sudo apt install python3-pip
 pip3 install brother_ql
 
-3.5 Copy the script print_label.py from repo https://github.com/ZiathLtd/cmprovision  labelprinter folder.
+3.5  install pylibdmtx libdmtx0b libdmtx-dev Pillow for printing Datamatrix on the label
+
+sudo apt install libdmtx0b libdmtx-dev
+sudo pip3 install pylibdmtx Pillow
+
+3.6 Copy the script print_label.py from repo https://github.com/ZiathLtd/cmprovision  labelprinter folder.
 Place the script in /home/pi folder.
 
-3.6 In CM Provisioner UI, Login with admin.
+3.7 In CM Provisioner UI, Login with admin.
 Navigate to Labels.
 Edit the Label. (Fill details as below) : 
 
