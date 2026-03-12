@@ -5,6 +5,7 @@ from PIL import Image, ImageDraw, ImageFont
 from brother_ql.conversion import convert
 from brother_ql.backends.helpers import send
 from brother_ql.raster import BrotherQLRaster
+from pylibdmtx.pylibdmtx import encode
 
 # ----- ARGUMENTS -----
 if len(sys.argv) != 2:
@@ -39,7 +40,17 @@ for line in content.splitlines():
 # ----- CONFIG -----
 PRINTER_MODEL = "QL-820NWB"
 
-printer=f"{printer_ip}:9100"
+encodedSerial = encode(serial.encode('utf-8'))
+
+datamatrix_img = Image.frombytes('RGB',(encodedSerial.width, encodedSerial.height), encodedSerial.pixels)
+datamatrix_img = datamatrix_img.resize((80,80), Image.NEAREST)
+
+# Determine printer identifier
+if '.local' in printer_ip.lower():
+    printer = printer_ip  # use hostname as-is
+else:
+    printer = f"{printer_ip}:9100"  # append port for raw IP
+    
 # Label size in pixels (full printer width)
 LABEL_WIDTH_PX = 306   # Must match printer expected width
 LABEL_HEIGHT_PX = 991  # For 29x90 mm die-cut label at 300 dpi
@@ -49,6 +60,9 @@ backend = 'network'
 # ----- CREATE LABEL IMAGE -----
 img = Image.new("RGB", (991, 306), "white")
 draw = ImageDraw.Draw(img)
+
+# ----- Paste the Datamatrix Image -----
+img.paste(datamatrix_img, (800, 140))
 
 # Load TrueType font
 font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 36)
